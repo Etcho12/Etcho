@@ -1,0 +1,311 @@
+
+Gemini와의 대화
+저녁메뉴를 추천해주는 프로그램 만들어줘. 파일은 html파일로
+
+요청하신 저녁 메뉴 추천 프로그램 HTML 파일이 생성되었습니다.
+
+HTML 아이콘
+dinner_recommendation
+ HTML 
+💡 주요 기능 및 특징
+카테고리 필터링: 한식, 일식, 중식, 양식, 분식/기타 카테고리별로 원하는 음식 종류만 선택해서 추천받을 수 있습니다.
+
+애니메이션 효과: 버튼을 클릭하면 슬롯머신처럼 아이콘과 메뉴가 렌더링되며 룰렛을 돌리는 듯한 재미를 더했습니다.
+
+세련된 UI/UX: 모바일 및 데스크톱 환경 모두에서 깔끔하게 작동하는 반응형 카드 스타일 디자인을 적용했습니다.
+
+다운로드한 dinner_recommendation.html 파일을 크롬이나 무작위 웹 브라우저로 열어서 바로 사용하실 수 있습니다!
+
+
+
+
+언주중학교 채팅은 Gemini 모델을 개선하는 데 사용되지 않습니다. Gemini는 AI이며 인물 등에 관한 정보 제공 시 실수를 할 수 있습니다. 개인 정보 보호 및 Gemini새 창에서 열기
+
+분석 중
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>오늘 저녁 뭐 먹지? | 저녁 메뉴 추천기</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --primary-hover: #EE5253;
+            --bg-gradient: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 99%, #FECFEF 100%);
+            --card-bg: #FFFFFF;
+            --text-main: #2D3436;
+            --text-sub: #636E72;
+            --accent: #48DBFB;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-main);
+        }
+
+        .container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            padding: 32px 24px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 24px;
+        }
+
+        /* Filter Tabs */
+        .category-tags {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+
+        .tag-btn {
+            background: #F1F2F6;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-sub);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tag-btn.active, .tag-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Display Box */
+        .display-card {
+            background: #F8F9FA;
+            border: 2px dashed #DFE4EA;
+            border-radius: 20px;
+            padding: 36px 20px;
+            margin-bottom: 28px;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-icon {
+            font-size: 54px;
+            margin-bottom: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-name {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+
+        .menu-desc {
+            font-size: 14px;
+            color: var(--text-sub);
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 16px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Slots Animation Effect */
+        .shake {
+            animation: shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            20% { transform: translate(-2px, -2px) rotate(-1deg); }
+            40% { transform: translate(-1px, 2px) rotate(1deg); }
+            60% { transform: translate(2px, 1px) rotate(0deg); }
+            80% { transform: translate(1px, -1px) rotate(1deg); }
+            100% { transform: translate(-1px, 2px) rotate(-1deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>오늘 저녁 뭐 먹지? 🍽️</h1>
+            <p>고민되는 저녁 메뉴, 랜덤으로 추천해드릴게요!</p>
+        </div>
+
+        <div class="category-tags">
+            <button class="tag-btn active" onclick="setCategory('all', this)">전체</button>
+            <button class="tag-btn" onclick="setCategory('korean', this)">한식</button>
+            <button class="tag-btn" onclick="setCategory('japanese', this)">일식</button>
+            <button class="tag-btn" onclick="setCategory('chinese', this)">중식</button>
+            <button class="tag-btn" onclick="setCategory('western', this)">양식</button>
+            <button class="tag-btn" onclick="setCategory('light', this)">분식/기타</button>
+        </div>
+
+        <div class="display-card" id="displayCard">
+            <div class="menu-icon" id="menuIcon">🎲</div>
+            <div class="menu-name" id="menuName">버튼을 눌러보세요!</div>
+            <div class="menu-desc" id="menuDesc">오늘의 최고의 저녁을 찾아드립니다.</div>
+        </div>
+
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="recommendMenu()">메뉴 추천받기 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        const menuList = [
+            // 한식
+            { name: "김치찌개", category: "korean", icon: "🍲", desc: "얼큰하고 칼칼한 한국인의 영혼의 닭고기 스프!" },
+            { name: "삼겹살", category: "korean", icon: "🥓", desc: "노릇노릇하게 구운 삼겹살에 소주 한 잔 어때요?" },
+            { name: "비빔밥", category: "korean", icon: "🥣", desc: "신선한 신선한 나물과 고추장의 완벽한 조화" },
+            { name: "제육볶음", category: "korean", icon: "🥘", desc: "매콤달콤한 양념에 밥 두 공기 뚝딱!" },
+            { name: "된장찌개", category: "korean", icon: "🍲", desc: "구수하고 속이 편안해지는 집밥 느낌" },
+            { name: "닭볶음탕", category: "korean", icon: "🍗", desc: "매콤한 양념에 감자와 닭고기의 환상 조합" },
+
+            // 일식
+            { name: "초밥", category: "japanese", icon: "🍣", desc: "신선한 회와 밥의 깔끔하고 고급스러운 조합" },
+            { name: "돈가스", category: "japanese", icon: "🍱", desc: "바삭바삭한 튀김옷과 촉촉한 육즙" },
+            { name: "라멘", category: "japanese", icon: "🍜", desc: "진한 진국 육수에 쫄깃한 면발" },
+            { name: "연어덮밥 (사케동)", category: "japanese", icon: "🍚", desc: "부드러운 연어가 입안에서 녹아내리는 맛" },
+
+            // 중식
+            { name: "짜장면 & 탕수육", category: "chinese", icon: "🥢", desc: "실패 없는 중식의 절대강자 콤비!" },
+            { name: "짬뽕", category: "chinese", icon: "🍜", desc: "해물이 듬뿍 들어간 시원하고 얼큰한 국물" },
+            { name: "마라탕", category: "chinese", icon: "🥘", desc: "중독성 넘치는 알싸하고 매콤한 맛" },
+            { name: "양꼬치", category: "chinese", icon: "🍢", desc: "칭따오 맥주와 함께 즐기는 풍미 가득한 밤" },
+
+            // 양식
+            { name: "스테이크", category: "western", icon: "🥩", desc: "특별한 날, 육즙 가득한 스테이크 한 점" },
+            { name: "파스타", category: "western", icon: "🍝", desc: "고소한 크림 또는 상큼한 토마토 파스타" },
+            { name: "피자", category: "western", icon: "🍕", desc: "쭉 늘어나는 치즈와 풍성한 토핑의 항연" },
+            { name: "수제버거", category: "western", icon: "🍔", desc: "두툼한 패티와 프레시한 야채의 볼륨감" },
+
+            // 분식/기타
+            { name: "떡볶이 & 튀김", category: "light", icon: "🍢", desc: "매콤달콤 국민 간식이자 영원한 저녁 메뉴" },
+            { name: "족발 & 보쌈", category: "light", icon: "🍖", desc: "쫄깃한 족발에 쟁반국수 조합은 못 참죠!" },
+            { name: "치맥 (치킨)", category: "light", icon: "🍗", desc: "하루의 피로를 날려버리는 바삭한 치킨" },
+            { name: "쌀국수", category: "light", icon: "🍜", desc: "깔끔하고 담백한 국물로 속을 따뜻하게" }
+        ];
+
+        let currentCategory = 'all';
+        let isSpinning = false;
+
+        function setCategory(category, element) {
+            if (isSpinning) return;
+            currentCategory = category;
+            
+            document.querySelectorAll('.tag-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        function recommendMenu() {
+            if (isSpinning) return;
+
+            const filteredList = currentCategory === 'all' 
+                ? menuList 
+                : menuList.filter(item => item.category === currentCategory);
+
+            if (filteredList.length === 0) return;
+
+            isSpinning = true;
+            const displayCard = document.getElementById('displayCard');
+            const menuIcon = document.getElementById('menuIcon');
+            const menuName = document.getElementById('menuName');
+            const menuDesc = document.getElementById('menuDesc');
+
+            displayCard.classList.add('shake');
+
+            let counter = 0;
+            const maxCounts = 20;
+            const interval = setInterval(() => {
+                const randomTemp = filteredList[Math.floor(Math.random() * filteredList.length)];
+                menuIcon.textContent = randomTemp.icon;
+                menuName.textContent = randomTemp.icon + " 추천 중...";
+                menuDesc.textContent = "과연 오늘의 저녁은?!";
+                
+                counter++;
+                if (counter >= maxCounts) {
+                    clearInterval(interval);
+                    displayCard.classList.remove('shake');
+                    
+                    const finalPick = filteredList[Math.floor(Math.random() * filteredList.length)];
+                    menuIcon.textContent = finalPick.icon;
+                    menuName.textContent = finalPick.name;
+                    menuDesc.textContent = finalPick.desc;
+                    isSpinning = false;
+                }
+            }, 80);
+        }
+    </script>
+</body>
+</html>
+dinner_recommendation.html
+dinner_recommendation.html 항목을 표시하는 중입니다.
