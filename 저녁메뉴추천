@@ -1,27 +1,3 @@
-
-Gemini와의 대화
-저녁메뉴를 추천해주는 프로그램 만들어줘. 파일은 html파일로
-
-요청하신 저녁 메뉴 추천 프로그램 HTML 파일이 생성되었습니다.
-
-HTML 아이콘
-dinner_recommendation
- HTML 
-💡 주요 기능 및 특징
-카테고리 필터링: 한식, 일식, 중식, 양식, 분식/기타 카테고리별로 원하는 음식 종류만 선택해서 추천받을 수 있습니다.
-
-애니메이션 효과: 버튼을 클릭하면 슬롯머신처럼 아이콘과 메뉴가 렌더링되며 룰렛을 돌리는 듯한 재미를 더했습니다.
-
-세련된 UI/UX: 모바일 및 데스크톱 환경 모두에서 깔끔하게 작동하는 반응형 카드 스타일 디자인을 적용했습니다.
-
-다운로드한 dinner_recommendation.html 파일을 크롬이나 무작위 웹 브라우저로 열어서 바로 사용하실 수 있습니다!
-
-
-
-
-언주중학교 채팅은 Gemini 모델을 개선하는 데 사용되지 않습니다. Gemini는 AI이며 인물 등에 관한 정보 제공 시 실수를 할 수 있습니다. 개인 정보 보호 및 Gemini새 창에서 열기
-
-분석 중
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -223,9 +199,9 @@ dinner_recommendation
     <script>
         const menuList = [
             // 한식
-            { name: "김치찌개", category: "korean", icon: "🍲", desc: "얼큰하고 칼칼한 한국인의 영혼의 닭고기 스프!" },
-            { name: "삼겹살", category: "korean", icon: "🥓", desc: "노릇노릇하게 구운 삼겹살에 소주 한 잔 어때요?" },
-            { name: "비빔밥", category: "korean", icon: "🥣", desc: "신선한 신선한 나물과 고추장의 완벽한 조화" },
+            { name: "김치찌개", category: "korean", icon: "🍲", desc: "얼큰하고 칼칼한 한국인의 소울푸드!" },
+            { name: "삼겹살", category: "korean", icon: "🥓", desc: "노릇노릇하게 구운 삼겹살에 한 잔 어때요?" },
+            { name: "비빔밥", category: "korean", icon: "🥣", desc: "신선한 나물과 고추장의 완벽한 조화" },
             { name: "제육볶음", category: "korean", icon: "🥘", desc: "매콤달콤한 양념에 밥 두 공기 뚝딱!" },
             { name: "된장찌개", category: "korean", icon: "🍲", desc: "구수하고 속이 편안해지는 집밥 느낌" },
             { name: "닭볶음탕", category: "korean", icon: "🍗", desc: "매콤한 양념에 감자와 닭고기의 환상 조합" },
@@ -234,24 +210,24 @@ dinner_recommendation
             { name: "초밥", category: "japanese", icon: "🍣", desc: "신선한 회와 밥의 깔끔하고 고급스러운 조합" },
             { name: "돈가스", category: "japanese", icon: "🍱", desc: "바삭바삭한 튀김옷과 촉촉한 육즙" },
             { name: "라멘", category: "japanese", icon: "🍜", desc: "진한 진국 육수에 쫄깃한 면발" },
-            { name: "연어덮밥 (사케동)", category: "japanese", icon: "🍚", desc: "부드러운 연어가 입안에서 녹아내리는 맛" },
+            { name: "연어덮밥", category: "japanese", icon: "🍚", desc: "부드러운 연어가 입안에서 녹아내리는 맛" },
 
             // 중식
             { name: "짜장면 & 탕수육", category: "chinese", icon: "🥢", desc: "실패 없는 중식의 절대강자 콤비!" },
             { name: "짬뽕", category: "chinese", icon: "🍜", desc: "해물이 듬뿍 들어간 시원하고 얼큰한 국물" },
             { name: "마라탕", category: "chinese", icon: "🥘", desc: "중독성 넘치는 알싸하고 매콤한 맛" },
-            { name: "양꼬치", category: "chinese", icon: "🍢", desc: "칭따오 맥주와 함께 즐기는 풍미 가득한 밤" },
+            { name: "양꼬치", category: "chinese", icon: "🍢", desc: "시원한 맥주와 함께 즐기는 풍미 가득한 밤" },
 
             // 양식
             { name: "스테이크", category: "western", icon: "🥩", desc: "특별한 날, 육즙 가득한 스테이크 한 점" },
             { name: "파스타", category: "western", icon: "🍝", desc: "고소한 크림 또는 상큼한 토마토 파스타" },
-            { name: "피자", category: "western", icon: "🍕", desc: "쭉 늘어나는 치즈와 풍성한 토핑의 항연" },
+            { name: "피자", category: "western", icon: "🍕", desc: "쭉 늘어나는 치즈와 풍성한 토핑의 향연" },
             { name: "수제버거", category: "western", icon: "🍔", desc: "두툼한 패티와 프레시한 야채의 볼륨감" },
 
             // 분식/기타
             { name: "떡볶이 & 튀김", category: "light", icon: "🍢", desc: "매콤달콤 국민 간식이자 영원한 저녁 메뉴" },
             { name: "족발 & 보쌈", category: "light", icon: "🍖", desc: "쫄깃한 족발에 쟁반국수 조합은 못 참죠!" },
-            { name: "치맥 (치킨)", category: "light", icon: "🍗", desc: "하루의 피로를 날려버리는 바삭한 치킨" },
+            { name: "치킨", category: "light", icon: "🍗", desc: "하루의 피로를 날려버리는 바삭한 치킨" },
             { name: "쌀국수", category: "light", icon: "🍜", desc: "깔끔하고 담백한 국물로 속을 따뜻하게" }
         ];
 
@@ -288,7 +264,7 @@ dinner_recommendation
             const interval = setInterval(() => {
                 const randomTemp = filteredList[Math.floor(Math.random() * filteredList.length)];
                 menuIcon.textContent = randomTemp.icon;
-                menuName.textContent = randomTemp.icon + " 추천 중...";
+                menuName.textContent = "추천 중...";
                 menuDesc.textContent = "과연 오늘의 저녁은?!";
                 
                 counter++;
@@ -307,5 +283,3 @@ dinner_recommendation
     </script>
 </body>
 </html>
-dinner_recommendation.html
-dinner_recommendation.html 항목을 표시하는 중입니다.
