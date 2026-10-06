@@ -1,549 +1,279 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>스마트 학급 자리 배치 시스템</title>
-  <style>
-    :root {
-      --primary: #3182F6;
-      --primary-hover: #1B64DA;
-      --primary-active: #1957C2;
-      --bg: #F2F4F6;
-      --card: #FFFFFF;
-      --text: #191F28;
-      --subtext: #8B95A1;
-      --border: #E5E8EB;
-      --border-focus: #3182F6;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JDM & Euro Custom Garage</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* 메인 레이아웃 */
+        #sidebar { width: 320px; background: #1e1e1e; padding: 20px; display: flex; flex-direction: column; gap: 20px; z-index: 10; border-right: 2px solid #333; }
+        #canvas-container { flex: 1; position: relative; display: flex; justify-content: center; align-items: center; background: #000; }
+        canvas { border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.8); }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+        h2 { font-size: 1.2rem; color: #ff3e3e; text-transform: uppercase; border-bottom: 2px solid #ff3e3e; padding-bottom: 5px; margin-bottom: 10px; }
+        
+        .control-group { display: flex; flex-direction: column; gap: 8px; }
+        label { font-size: 0.9rem; color: #aaa; }
+        select, input[type="color"] { width: 100%; padding: 8px; background: #2a2a2a; color: #fff; border: 1px solid #444; border-radius: 4px; outline: none; }
+        
+        /* 스탯 파트 */
+        .stat-box { background: #252525; padding: 12px; border-radius: 6px; }
+        .stat-line { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; }
+        .stat-bar { height: 6px; background: #444; border-radius: 3px; overflow: hidden; }
+        .stat-fill { height: 100%; background: #ff3e3e; width: 0%; transition: width 0.3s; }
 
-    body {
-      font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px 16px;
-    }
-
-    .app-container {
-      width: 100%;
-      max-width: 480px;
-      background: var(--card);
-      border-radius: 24px;
-      padding: 32px 24px;
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.05);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .header-title {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: var(--text);
-      text-align: center;
-      margin-bottom: 24px;
-      letter-spacing: -0.5px;
-    }
-
-    .step-content {
-      display: none;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.25s ease, transform 0.25s ease;
-    }
-
-    .step-content.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .sub-guide {
-      font-size: 0.82rem;
-      color: var(--subtext);
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
-
-    input[type="number"], select {
-      width: 100%;
-      height: 48px;
-      padding: 0 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
-      color: var(--text);
-      background-color: #FAFAFB;
-      outline: none;
-      transition: border-color 0.15s ease, background-color 0.15s ease;
-    }
-
-    input[type="number"]:focus, select:focus {
-      border-color: var(--border-focus);
-      background-color: #FFFFFF;
-    }
-
-    .btn {
-      width: 100%;
-      height: 52px;
-      background-color: var(--primary);
-      color: #FFFFFF;
-      border: none;
-      border-radius: 14px;
-      font-size: 1rem;
-      font-weight: 700;
-      font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
-      cursor: pointer;
-      margin-top: 16px;
-      transition: transform 0.08s ease, background-color 0.15s ease;
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      user-select: none;
-    }
-
-    .btn:hover {
-      background-color: var(--primary-hover);
-    }
-
-    .btn:active {
-      transform: scale(0.96);
-      background-color: var(--primary-active);
-    }
-
-    .btn-secondary {
-      background-color: #F2F4F6;
-      color: #4E5968;
-      margin-top: 8px;
-    }
-
-    .btn-secondary:hover {
-      background-color: #E5E8EB;
-    }
-
-    .btn-secondary:active {
-      background-color: #D1D6DB;
-      color: #333D4B;
-    }
-
-    .sep-pair {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .sep-pair span {
-      color: var(--subtext);
-      font-weight: bold;
-    }
-
-    .progress-bar {
-      height: 6px;
-      background: #F2F4F6;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 20px;
-    }
-
-    .progress {
-      height: 100%;
-      background: var(--primary);
-      width: 0%;
-      transition: width 0.25s ease;
-    }
-
-    .personality-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .p-btn {
-      height: 54px;
-      border: 1px solid var(--border);
-      background: #FAFAFB;
-      border-radius: 12px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      font-family: '맑은 고딕', 'Malgun Gothic', sans-serif;
-      color: var(--text);
-      cursor: pointer;
-      transition: transform 0.08s ease, border-color 0.15s ease, background-color 0.15s ease;
-      user-select: none;
-    }
-
-    .p-btn:hover {
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-
-    .p-btn:active {
-      transform: scale(0.95);
-      background-color: #E8F3FF;
-    }
-
-    .board-header {
-      text-align: center;
-      background: #E5E8EB;
-      color: #4E5968;
-      padding: 10px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.88rem;
-      margin-bottom: 20px;
-      letter-spacing: -0.3px;
-    }
-
-    .seating-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      max-height: 380px;
-      overflow-y: auto;
-      padding-right: 4px;
-    }
-
-    .group-card {
-      background: #FAFAFB;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 12px;
-      display: grid;
-      gap: 8px;
-    }
-
-    .seat-box {
-      background: #FFFFFF;
-      border: 1px solid #D1D6DB;
-      border-radius: 8px;
-      padding: 12px;
-      text-align: center;
-      font-weight: 700;
-      font-size: 1rem;
-      color: var(--text);
-    }
-
-    .seat-box.empty {
-      background: #F2F4F6;
-      border-style: dashed;
-      color: var(--subtext);
-    }
-  </style>
+        .btn { padding: 12px; background: #ff3e3e; color: #fff; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; text-align: center; }
+        .btn:hover { background: #e03232; }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
-  <div class="header-title">스마트 자리 배치</div>
-
-  <!-- 1단계: 기본 정보 설정 -->
-  <div id="step1" class="step-content active">
-    <div class="form-group">
-      <label for="studentCount">전체 학생 수</label>
-      <input type="number" id="studentCount" min="2" max="60" value="10">
-    </div>
-
-    <div class="form-group">
-      <label for="groupSize">모둠 구성 단위</label>
-      <select id="groupSize">
-        <option value="2">2명씩 (짝꿍)</option>
-        <option value="3">3명 모둠</option>
-        <option value="4">4명 모둠</option>
-        <option value="5">5명 모둠</option>
-        <option value="6">6명 모둠</option>
-      </select>
-    </div>
-
-    <button class="btn" onclick="goToStep2()">다음</button>
-  </div>
-
-  <!-- 2단계: 떨어뜨려 놓을 학생 설정 -->
-  <div id="step2" class="step-content">
-    <label>분리 학생 설정</label>
-    <p id="sepGuideText" class="sub-guide">같이 앉으면 안 되는 학생 번호를 쌍으로 입력하세요.</p>
+<div id="sidebar">
+    <h1>GARAGE</h1>
     
-    <div id="separatedPairs"></div>
-    
-    <button type="button" class="btn btn-secondary" onclick="addSeparatedPairField()">+ 조건 추가</button>
-    <button class="btn" onclick="goToStep3()">다음</button>
-  </div>
-
-  <!-- 3단계: 개별 학생 성격 설정 -->
-  <div id="step3" class="step-content">
-    <div class="progress-bar"><div id="progress" class="progress"></div></div>
-    <label id="studentHeader">학생 설정</label>
-    <p class="sub-guide">해당 학생의 성격을 선택해주세요.</p>
-
-    <div class="personality-grid">
-      <button class="p-btn" onclick="selectPersonality('성실')">성실</button>
-      <button class="p-btn" onclick="selectPersonality('불성실')">불성실</button>
-      <button class="p-btn" onclick="selectPersonality('활발')">활발</button>
-      <button class="p-btn" onclick="selectPersonality('소심')">소심</button>
-      <button class="p-btn" onclick="selectPersonality('친화적')">친화적</button>
-      <button class="p-btn" onclick="selectPersonality('자기중심적')">자기중심적</button>
+    <!-- 차량 선택 -->
+    <div class="control-group">
+        <h2>1. 차량 선택</h2>
+        <select id="carSelect">
+            <option value="e30">BMW M3 (E30)</option>
+            <option value="e36">BMW M3 (E36)</option>
+            <option value="r34">Nissan GT-R (R34)</option>
+            <option value="r35">Nissan GT-R (R35)</option>
+            <option value="s13">Nissan Silvia (S13)</option>
+            <option value="s14">Nissan Silvia (S14)</option>
+            <option value="s15">Nissan Silvia (S15)</option>
+        </select>
     </div>
-  </div>
 
-  <!-- 4단계: 결과 배치도 -->
-  <div id="step4" class="step-content">
-    <div class="board-header">칠 판 (앞)</div>
-    <div id="seatingBoard" class="seating-grid"></div>
+    <!-- 커스텀 (외관) -->
+    <div class="control-group">
+        <h2>2. 드레스업</h2>
+        <label>바디 컬러</label>
+        <input type="color" id="paintColor" value="#d01010">
+        
+        <label>바디킷 Style</label>
+        <select id="bodyKit">
+            <option value="0">순정 (Stock)</option>
+            <option value="1">Street Kit (프론트/스포일러)</option>
+            <option value="2">Race Widebody (와이드바디+대형 윙)</option>
+        </select>
+    </div>
 
-    <button class="btn" onclick="generateSeating()">다시 배치하기</button>
-    <button class="btn btn-secondary" onclick="location.reload()">처음부터 다시하기</button>
-  </div>
+    <!-- 성능 튜닝 -->
+    <div class="control-group">
+        <h2>3. 성능 튜닝</h2>
+        <label>터보 차저</label>
+        <select id="turboTune">
+            <option value="0">순정 NA / 기본 터보</option>
+            <option value="1">Stage 1 싱글 터보 (+50 HP)</option>
+            <option value="2">Stage 2 트윈 터보 (+120 HP)</option>
+            <option value="3">Stage 3 레이싱 빅터보 (+250 HP)</option>
+        </select>
+    </div>
+
+    <!-- 성능 제원 표시 -->
+    <div class="stat-box">
+        <div class="stat-line"><span>출력 (Horsepower)</span><span id="hpText">200 HP</span></div>
+        <div class="stat-bar"><div id="hpBar" class="stat-fill"></div></div>
+        
+        <div class="stat-line" style="margin-top: 10px;"><span>최고 속도 (Top Speed)</span><span id="speedText">220 km/h</span></div>
+        <div class="stat-bar"><div id="speedBar" class="stat-fill"></div></div>
+    </div>
+</div>
+
+<div id="canvas-container">
+    <canvas id="garageCanvas" width="800" height="450"></canvas>
 </div>
 
 <script>
-  let totalStudents = 0;
-  let groupSize = 2;
-  let currentStudentIdx = 1;
-  let studentsData = [];
-  let separatedPairs = [];
-  let maxForbiddenPerStudent = 0;
+const canvas = document.getElementById('garageCanvas');
+const ctx = canvas.getContext('2d');
 
-  // 클릭 소리 생성 (Web Audio API)
-  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  function playClickSound() {
-    if (audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
+// 차량 데이터베이스
+const carData = {
+    e30: { name: "BMW M3 (E30)", baseHp: 200, baseSpeed: 235, bodyType: "box" },
+    e36: { name: "BMW M3 (E36)", baseHp: 282, baseSpeed: 250, bodyType: "box-sleek" },
+    r34: { name: "Nissan GT-R (R34)", baseHp: 276, baseSpeed: 255, bodyType: "coupe" },
+    r35: { name: "Nissan GT-R (R35)", baseHp: 565, baseSpeed: 315, bodyType: "modern" },
+    s13: { name: "Nissan Silvia (S13)", baseHp: 202, baseSpeed: 230, bodyType: "coupe-light" },
+    s14: { name: "Nissan Silvia (S14)", baseHp: 217, baseSpeed: 235, bodyType: "coupe-round" },
+    s15: { name: "Nissan Silvia (S15)", baseHp: 247, baseSpeed: 245, bodyType: "coupe-sharp" }
+};
+
+// 현재 설정 상태
+let currentCar = 'e30';
+let color = '#d01010';
+let kit = 0;
+let turbo = 0;
+
+// UI 엘리먼트
+const carSelect = document.getElementById('carSelect');
+const paintColor = document.getElementById('paintColor');
+const bodyKit = document.getElementById('bodyKit');
+const turboTune = document.getElementById('turboTune');
+
+// 이벤트 리스너 설정
+carSelect.addEventListener('change', (e) => { currentCar = e.target.value; update(); });
+paintColor.addEventListener('input', (e) => { color = e.target.value; update(); });
+bodyKit.addEventListener('change', (e) => { kit = parseInt(e.target.value); update(); });
+turboTune.addEventListener('change', (e) => { turbo = parseInt(e.target.value); update(); });
+
+function update() {
+    calculateStats();
+    drawGarage();
+}
+
+function calculateStats() {
+    const data = carData[currentCar];
+    let addedHp = 0;
+    if (turbo === 1) addedHp = 50;
+    if (turbo === 2) addedHp = 120;
+    if (turbo === 3) addedHp = 250;
+
+    const totalHp = data.baseHp + addedHp;
+    const totalSpeed = Math.round(data.baseSpeed + (addedHp * 0.25));
+
+    document.getElementById('hpText').innerText = `${totalHp} HP`;
+    document.getElementById('hpBar').style.width = `${Math.min(100, (totalHp / 800) * 100)}%`;
+
+    document.getElementById('speedText').innerText = `${totalSpeed} km/h`;
+    document.getElementById('speedBar').style.width = `${Math.min(100, (totalSpeed / 400) * 100)}%`;
+}
+
+function drawGarage() {
+    // 배경 (정비소 느낌)
+    ctx.fillStyle = '#1a1a1a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(320, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.04);
+    // 바닥 격자
+    ctx.strokeStyle = '#2c2c2c';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < canvas.width; i += 40) {
+        ctx.beginPath(); ctx.moveTo(i, 300); ctx.lineTo(i - 100, 450); ctx.stroke();
+    }
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 300, canvas.width, 150);
+
+    // 그림자
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+    ctx.beginPath();
+    ctx.ellipse(400, 330, 230, 30, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 차 그리기
+    drawCar(400, 280);
+}
+
+function drawCar(x, y) {
+    ctx.save();
+    ctx.translate(x, y);
+
+    // 1. 와이드 바디킷 (바탕)
+    if (kit === 2) {
+        ctx.fillStyle = color;
+        // 펜더 휠아치 확장
+        ctx.fillRect(-210, 15, 70, 25);
+        ctx.fillRect(130, 15, 70, 25);
+    }
+
+    // 2. 기본 바디 쉘
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.roundRect(-200, 0, 390, 40, [10, 15, 5, 5]);
+    ctx.fill();
+
+    // 루프 (캐빈)
+    ctx.beginPath();
+    ctx.moveTo(-100, 0);
+    ctx.lineTo(-50, -45);
+    ctx.lineTo(80, -45);
+    ctx.lineTo(130, 0);
+    ctx.closePath();
+    ctx.fill();
+
+    // 3. 창문
+    ctx.fillStyle = '#111520';
+    ctx.beginPath();
+    ctx.moveTo(-90, -3);
+    ctx.lineTo(-45, -40);
+    ctx.lineTo(75, -40);
+    ctx.lineTo(115, -3);
+    ctx.closePath();
+    ctx.fill();
+
+    // 4. 바디킷 에어로 파츠 (즉시 반영되는 실시간 튜닝)
+    if (kit >= 1) {
+        // 프론트 립 스포일러
+        ctx.fillStyle = '#111';
+        ctx.fillRect(160, 35, 40, 8);
+        
+        // 사이드 스커트
+        ctx.fillRect(-140, 38, 280, 6);
+    }
+
+    if (kit === 1) {
+        // 스트리트 스포일러
+        ctx.fillStyle = '#111';
+        ctx.fillRect(-200, -20, 15, 5);
+        ctx.fillRect(-195, -15, 5, 15);
+    } else if (kit === 2) {
+        // 대형 GT 레이스 윙
+        ctx.fillStyle = '#111';
+        ctx.fillRect(-205, -45, 35, 6); // 윙 상단
+        ctx.fillRect(-185, -39, 5, 40); // 지지대 1
+        ctx.fillRect(-195, -39, 5, 40); // 지지대 2
+        // 거대한 프론트 디퓨저
+        ctx.fillRect(170, 38, 35, 7);
+    }
+
+    // 5. 헤드라이트 & 테일램프
+    // 테일램프
+    ctx.fillStyle = '#ff1111';
+    ctx.fillRect(-200, 5, 10, 15);
     
-    gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.04);
-    
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.04);
-  }
+    // 헤드라이트
+    ctx.fillStyle = '#e6f2ff';
+    ctx.beginPath();
+    ctx.arc(185, 12, 8, 0, Math.PI * 2);
+    ctx.fill();
 
-  // 전체 버튼에 클릭 소리 부여
-  document.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON' || e.target.classList.contains('p-btn')) {
-      playClickSound();
-    }
-  });
+    // 6. 바퀴 (휠/타이어)
+    drawWheel(-130, 35);
+    drawWheel(130, 35);
 
-  function showStep(stepId) {
-    document.querySelectorAll('.step-content').forEach(el => {
-      el.classList.remove('active');
-    });
-    const target = document.getElementById(stepId);
-    target.classList.add('active');
-  }
+    ctx.restore();
+}
 
-  function goToStep2() {
-    totalStudents = parseInt(document.getElementById('studentCount').value);
-    groupSize = parseInt(document.getElementById('groupSize').value);
+function drawWheel(wx, wy) {
+    ctx.save();
+    ctx.translate(wx, wy);
 
-    if (!totalStudents || totalStudents < 2) {
-      alert('학생 수는 최소 2명 이상이어야 합니다.');
-      return;
-    }
+    // 타이어
+    ctx.fillStyle = '#1c1c1c';
+    ctx.beginPath();
+    ctx.arc(0, 0, 26, 0, Math.PI * 2);
+    ctx.fill();
 
-    maxForbiddenPerStudent = Math.max(0, totalStudents - 2);
-    document.getElementById('sepGuideText').innerText = 
-      `같이 앉으면 안 되는 학생 번호 쌍을 입력하세요. (한 학생당 최대 ${maxForbiddenPerStudent}명까지 지정 가능)`;
+    // 휠 스포크
+    ctx.fillStyle = (kit === 2) ? '#d4af37' : '#cccccc'; // 바디킷 2면 골드휠
+    ctx.beginPath();
+    ctx.arc(0, 0, 16, 0, Math.PI * 2);
+    ctx.fill();
 
-    document.getElementById('separatedPairs').innerHTML = '';
-    addSeparatedPairField();
-    showStep('step2');
-  }
+    ctx.fillStyle = '#111';
+    ctx.beginPath();
+    ctx.arc(0, 0, 6, 0, Math.PI * 2);
+    ctx.fill();
 
-  function addSeparatedPairField() {
-    const container = document.getElementById('separatedPairs');
-    const div = document.createElement('div');
-    div.className = 'sep-pair';
-    div.innerHTML = `
-      <input type="number" placeholder="학생 번호" class="sep-a" min="1" max="${totalStudents}">
-      <span>-</span>
-      <input type="number" placeholder="학생 번호" class="sep-b" min="1" max="${totalStudents}">
-    `;
-    container.appendChild(div);
-  }
+    ctx.restore();
+}
 
-  function validateSeparatedPairs() {
-    const pairRows = document.querySelectorAll('.sep-pair');
-    const forbiddenCounts = {};
-    const validPairs = [];
-
-    for (let row of pairRows) {
-      const a = parseInt(row.querySelector('.sep-a').value);
-      const b = parseInt(row.querySelector('.sep-b').value);
-
-      if (a && b) {
-        if (a === b) {
-          alert('자기 자신을 금지 대상으로 선택할 수 없습니다.');
-          return false;
-        }
-
-        forbiddenCounts[a] = (forbiddenCounts[a] || 0) + 1;
-        forbiddenCounts[b] = (forbiddenCounts[b] || 0) + 1;
-
-        if (forbiddenCounts[a] > maxForbiddenPerStudent || forbiddenCounts[b] > maxForbiddenPerStudent) {
-          alert(`한 학생당 최대 ${maxForbiddenPerStudent}명까지만 금지할 수 있습니다.`);
-          return false;
-        }
-
-        validPairs.push([a, b]);
-      }
-    }
-
-    separatedPairs = validPairs;
-    return true;
-  }
-
-  function goToStep3() {
-    if (!validateSeparatedPairs()) return;
-
-    currentStudentIdx = 1;
-    studentsData = [];
-    updateStep3UI();
-    showStep('step3');
-  }
-
-  function updateStep3UI() {
-    document.getElementById('studentHeader').innerText = `${currentStudentIdx}번 학생 성격 선택`;
-    const progressPercent = ((currentStudentIdx - 1) / totalStudents) * 100;
-    document.getElementById('progress').style.width = `${progressPercent}%`;
-  }
-
-  function selectPersonality(trait) {
-    studentsData.push({ id: currentStudentIdx, trait: trait });
-
-    if (currentStudentIdx < totalStudents) {
-      currentStudentIdx++;
-      updateStep3UI();
-    } else {
-      showStep('step4');
-      generateSeating();
-    }
-  }
-
-  function generateSeating() {
-    let bestArrangement = null;
-    let attempts = 0;
-    const maxAttempts = 6000;
-
-    while (attempts < maxAttempts) {
-      attempts++;
-      let shuffled = [...studentsData].sort(() => Math.random() - 0.5);
-
-      let score = 0;
-      let isValid = true;
-
-      // 모둠 단위로 분리 조건 및 성격 궁합 체크
-      for (let i = 0; i < shuffled.length; i += groupSize) {
-        const group = shuffled.slice(i, i + groupSize);
-
-        // 모둠 내부 분리 대상 체크
-        for (let x = 0; x < group.length; x++) {
-          for (let y = x + 1; y < group.length; y++) {
-            const s1 = group[x];
-            const s2 = group[y];
-
-            const isSeparated = separatedPairs.some(pair =>
-              (pair[0] === s1.id && pair[1] === s2.id) || (pair[0] === s2.id && pair[1] === s1.id)
-            );
-
-            if (isSeparated) {
-              isValid = false;
-              break;
-            }
-
-            // 성격 조합 평가
-            const pairTraits = [s1.trait, s2.trait].sort().join('-');
-            if (pairTraits === '불성실-불성실') score -= 10;
-            if (pairTraits === '자기중심적-자기중심적') score -= 10;
-            if (pairTraits === '소심-자기중심적') score -= 7;
-            if (pairTraits === '소심-소심') score -= 3;
-            if (pairTraits === '활발-활발') score -= 2;
-
-            if (pairTraits === '불성실-성실') score += 8;
-            if (pairTraits === '소심-친화적') score += 7;
-            if (pairTraits === '성실-활발') score += 4;
-            if (pairTraits === '자기중심적-친화적') score += 3;
-          }
-          if (!isValid) break;
-        }
-
-        if (!isValid) break;
-      }
-
-      if (isValid) {
-        if (!bestArrangement || score > bestArrangement.score) {
-          bestArrangement = { list: shuffled, score: score };
-        }
-      }
-    }
-
-    if (!bestArrangement) {
-      alert('설정하신 금지 조건을 모두 만족하는 배치를 찾기 어렵습니다. 조건을 소폭 완화해 주세요.');
-      renderBoard(studentsData);
-    } else {
-      renderBoard(bestArrangement.list);
-    }
-  }
-
-  function renderBoard(list) {
-    const board = document.getElementById('seatingBoard');
-    board.innerHTML = '';
-
-    for (let i = 0; i < list.length; i += groupSize) {
-      const groupDiv = document.createElement('div');
-      groupDiv.className = 'group-card';
-      groupDiv.style.gridTemplateColumns = groupSize > 2 ? `repeat(${Math.min(3, groupSize)}, 1fr)` : 'repeat(2, 1fr)';
-
-      for (let g = 0; g < groupSize; g++) {
-        const student = list[i + g];
-        const seatBox = document.createElement('div');
-
-        if (student) {
-          seatBox.className = 'seat-box';
-          seatBox.innerText = `${student.id}번`;
-        } else {
-          seatBox.className = 'seat-box empty';
-          seatBox.innerText = '-';
-        }
-
-        groupDiv.appendChild(seatBox);
-      }
-
-      board.appendChild(groupDiv);
-    }
-  }
+// 초기화 실행
+update();
 </script>
+
 </body>
 </html>
